@@ -275,13 +275,31 @@ F1 produces this help.
             this.FocusOnStones();
         }
 
-        //// prevButton_left_down handles the rewind one move button.  Also,
-        //// mainwin_keydown calls this to handle left arrow.  This also handles
-        //// removing and restoring adornments, and handling the current move
-        //// adornment.  This function assumes the game is started, and there's a
-        //// move to rewind.
-        ////
-        public void prevButtonLeftDown(object self, RoutedEventArgs e) {
+		//// scoreButton_left_down handles creating a passing move.  Also,
+		//// mainwin_keydown calls this to handle c-p.
+		////
+		private void scoreButton_left_down(object sender, RoutedEventArgs e)
+		{
+			Dictionary<Color, int> scores = this.Game.Board.GetScore();
+			string output = "Score: \n";
+			foreach (KeyValuePair<Color, int> score in scores)
+			{
+				string colordesc = "error";
+				if (score.Key.Equals(Colors.Black)) colordesc = "Black";
+				if (score.Key.Equals(Colors.White)) colordesc = "White";
+				if (score.Key.Equals(GoBoardAux.thirdColor)) colordesc = "Player3";
+				output += colordesc + ": " + score.Value.ToString() + "\n";
+			}
+			MessageBox.Show(output);
+		}
+
+		//// prevButton_left_down handles the rewind one move button.  Also,
+		//// mainwin_keydown calls this to handle left arrow.  This also handles
+		//// removing and restoring adornments, and handling the current move
+		//// adornment.  This function assumes the game is started, and there's a
+		//// move to rewind.
+		////
+		public void prevButtonLeftDown(object self, RoutedEventArgs e) {
             var move = this.Game.UnwindMove();
             //remove_stone(main_win.FindName("stonesGrid"), move)
             if (! move.IsPass)
@@ -418,14 +436,25 @@ F1 produces this help.
         }
 
 
+		private void threeColorButton_left_down(object sender, RoutedEventArgs e)
+		{
+			if (GoBoardAux.thirdColor == GoBoardAux.NoColor)
+			{
+				threeColorButton.Content = "3C+";
+				GoBoardAux.thirdColor = Colors.Tomato;
+			}
+			else
+			{
+				threeColorButton.Content = "3C-";
+				GoBoardAux.thirdColor = GoBoardAux.NoColor;
+			}
 
+		}
 
-
-
-        //// openButton_left_down prompts to save current game if dirty and then
-        //// prompts for a .sgf file to open.
-        ////
-        private void openButton_left_down(object open_button, RoutedEventArgs e) {
+		//// openButton_left_down prompts to save current game if dirty and then
+		//// prompts for a .sgf file to open.
+		////
+		private void openButton_left_down(object open_button, RoutedEventArgs e) {
             this.CheckDirtySave();
             var dlg = new OpenFileDialog();
             dlg.FileName = "game01"; // Default file name
@@ -1158,15 +1187,14 @@ F1 produces this help.
             get { return this.commentBox.Text; }
             set { this.commentBox.Text = value; }
         }
-
-    } // class MainWindow
-
+	} // class MainWindow
 
 
-    //// MainWindowAux provides "stateless" helpers for MainWindow.  This class is internal, but
-    //// only MainWindow uses it.
-    ////
-    internal static class MainWindowAux {
+
+	//// MainWindowAux provides "stateless" helpers for MainWindow.  This class is internal, but
+	//// only MainWindow uses it.
+	////
+	internal static class MainWindowAux {
 
         ////
         //// Setup Lines Grid Utilities

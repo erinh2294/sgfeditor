@@ -74,6 +74,62 @@ namespace SgfEd {
                 return GoBoardAux.NoColor;
         }
 
+		//// LocateColor gathers all the stones at row, col of color color, adding them
+		//// to the list dead_stones.  This does not update the board model by removing
+		//// the stones.  CheckForKill uses this to collect stones.  ReadyForRendering calls
+		//// CheckForKill to prepare moves for rendering, but it shouldn't remove stones
+		//// from the board.
+		////
+		private Color LocateColor(int row, int col, bool[,] visited)
+		{
+			Debug.Assert(visited != null, "Must call CollectStones with initial matrix of null values.");
+			if (row < 1 || row > this.Size || col < 1 || col > this.Size)
+				return GoBoardAux.NoColor;
+
+			if (!visited[row - 1, col - 1])
+			{
+				visited[row - 1, col - 1] = true;
+
+				Color tmpcolor = this.ColorAt(row, col);
+				if (tmpcolor != GoBoardAux.NoColor)
+				{
+					return tmpcolor;
+				}
+
+				tmpcolor = LocateColor(row + 1, col, visited);
+				if (tmpcolor != GoBoardAux.NoColor) return tmpcolor;
+				tmpcolor = LocateColor(row - 1, col, visited);
+				if (tmpcolor != GoBoardAux.NoColor) return tmpcolor;
+				tmpcolor = LocateColor(row, col - 1, visited);
+				if (tmpcolor != GoBoardAux.NoColor) return tmpcolor;
+				tmpcolor = LocateColor(row, col + 1, visited);
+				if (tmpcolor != GoBoardAux.NoColor) return tmpcolor;
+			}
+			return GoBoardAux.NoColor;
+		}
+
+		public Dictionary<Color, int> GetScore() {
+			Dictionary<Color, int> ret = new Dictionary<Color, int>();
+			for (var row = 0; row < this.Size; row++)
+				for (var col = 0; col < this.Size; col++)
+				{
+					var visited = new bool[this.Size, this.Size];
+					Color color = LocateColor(row, col, visited);
+					if (color == GoBoardAux.NoColor) continue;
+					if (!ret.ContainsKey(color)) {
+						ret.Add(color, 1);
+					}
+					else
+					{
+						int score;
+						ret.TryGetValue(color, out score);
+						ret.Remove(color);
+						ret.Add(color, score + 1);
+					}
+				}
+			return ret;
+		}
+	
 
         //// has_stone returns true if the go board location row,col (one-based) has
         //// a stone.  This function assumes row and col are valid locations.
@@ -123,7 +179,7 @@ namespace SgfEd {
             return this.HasStoneDown(row, col) && (this.MoveAt(row + 1, col).Color == color);
         }
 
-    } // GoBoard class
+	} // GoBoard class
 
 
 
@@ -202,6 +258,8 @@ namespace SgfEd {
                                            Array.IndexOf(GoBoardAux.letters, coords[0]));
             }
         }
+
+		internal static Color thirdColor = GoBoardAux.NoColor;
 
     } // GoBoardAux class
 

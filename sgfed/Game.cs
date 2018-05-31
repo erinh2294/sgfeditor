@@ -457,17 +457,17 @@ namespace SgfEd {
                 this.CollectStones(row + 1, col, color, dead_stones, visited);
         }
 
-        ////
-        //// Unwinding Moves and Goign to Start
-        ////
-    
-        //// unwind_move removes the last move made (see make_move).  Other than
-        //// marking the previous move as the current move with a UI adornments,
-        //// this handles rewinding game moves.  If the game has not started, or
-        //// there's no current move, this signals an error.  This returns the move
-        //// that was current before rewinding.
-        ////
-        public Move UnwindMove () {
+		////
+		//// Unwinding Moves and Goign to Start
+		////
+
+		//// unwind_move removes the last move made (see make_move).  Other than
+		//// marking the previous move as the current move with a UI adornments,
+		//// this handles rewinding game moves.  If the game has not started, or
+		//// there's no current move, this signals an error.  This returns the move
+		//// that was current before rewinding.
+		////
+		public Move UnwindMove () {
             // These debug.asserts could arguably be throw's if we think of this function
             // as platform/library.
             Debug.Assert(this.State != GameState.NotStarted,
@@ -1703,12 +1703,20 @@ namespace SgfEd {
         ////
 
         public static Color OppositeMoveColor (Color color) {
-			if (color == Colors.Black)
-				return Colors.White;
-			else if (color == Colors.White)
-				return Colors.Tomato;
+			if (GoBoardAux.thirdColor == GoBoardAux.NoColor)
+			{
+
+				return color == Colors.Black ? Colors.White : Colors.Black;
+			}
 			else
-				return Colors.Black;
+			{
+				if (color == Colors.Black)
+					return Colors.White;
+				else if (color == Colors.White)
+					return GoBoardAux.thirdColor;
+				else
+					return Colors.Black;
+			}
         }
 
 
