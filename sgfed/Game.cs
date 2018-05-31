@@ -374,7 +374,21 @@ namespace SgfEd {
             if (this.Board.HasStoneColorDown(row, col, opp_color) && 
                 ! this.FindLiberty(row + 1, col, opp_color))
                 this.CollectStones(row + 1, col, opp_color, dead_stones, visited);
-            move.DeadStones = dead_stones;
+			opp_color = GameAux.OppositeMoveColor(opp_color);
+			visited = new bool[this.Board.Size, this.Board.Size];
+			if (this.Board.HasStoneColorLeft(row, col, opp_color) &&
+				!this.FindLiberty(row, col - 1, opp_color))
+				this.CollectStones(row, col - 1, opp_color, dead_stones, visited);
+			if (this.Board.HasStoneColorUp(row, col, opp_color) &&
+				!this.FindLiberty(row - 1, col, opp_color))
+				this.CollectStones(row - 1, col, opp_color, dead_stones, visited);
+			if (this.Board.HasStoneColorRight(row, col, opp_color) &&
+				!this.FindLiberty(row, col + 1, opp_color))
+				this.CollectStones(row, col + 1, opp_color, dead_stones, visited);
+			if (this.Board.HasStoneColorDown(row, col, opp_color) &&
+				!this.FindLiberty(row + 1, col, opp_color))
+				this.CollectStones(row + 1, col, opp_color, dead_stones, visited);
+			move.DeadStones = dead_stones;
             return dead_stones;
         }
 
@@ -1689,7 +1703,12 @@ namespace SgfEd {
         ////
 
         public static Color OppositeMoveColor (Color color) {
-            return color == Colors.Black ? Colors.White : Colors.Black;
+			if (color == Colors.Black)
+				return Colors.White;
+			else if (color == Colors.White)
+				return Colors.Tomato;
+			else
+				return Colors.Black;
         }
 
 
