@@ -96,13 +96,13 @@ namespace SgfEd {
 					return tmpcolor;
 				}
 
-				tmpcolor = LocateColor(row + 1, col, visited);
+				tmpcolor = LocateColor(row+1, col, visited);
 				if (tmpcolor != GoBoardAux.NoColor) return tmpcolor;
-				tmpcolor = LocateColor(row - 1, col, visited);
+				tmpcolor = LocateColor(row, col+1, visited);
 				if (tmpcolor != GoBoardAux.NoColor) return tmpcolor;
-				tmpcolor = LocateColor(row, col - 1, visited);
+				tmpcolor = LocateColor(row-1, col, visited);
 				if (tmpcolor != GoBoardAux.NoColor) return tmpcolor;
-				tmpcolor = LocateColor(row, col + 1, visited);
+				tmpcolor = LocateColor(row, col-1, visited);
 				if (tmpcolor != GoBoardAux.NoColor) return tmpcolor;
 			}
 			return GoBoardAux.NoColor;
@@ -110,8 +110,8 @@ namespace SgfEd {
 
 		public Dictionary<Color, int> GetScore() {
 			Dictionary<Color, int> ret = new Dictionary<Color, int>();
-			for (var row = 0; row < this.Size; row++)
-				for (var col = 0; col < this.Size; col++)
+			for (var row = 0; row <= this.Size; row++)
+				for (var col = 0; col <= this.Size; col++)
 				{
 					var visited = new bool[this.Size, this.Size];
 					Color color = LocateColor(row, col, visited);
@@ -260,10 +260,9 @@ namespace SgfEd {
         }
 
 		internal static Color thirdColor = GoBoardAux.NoColor;
+        internal static Color fourthColor = GoBoardAux.NoColor;
 
     } // GoBoardAux class
-
-
 
     public class Move {
         public int Row { get; set; }

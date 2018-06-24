@@ -282,15 +282,35 @@ F1 produces this help.
 		{
 			Dictionary<Color, int> scores = this.Game.Board.GetScore();
 			string output = "Score: \n";
+            int bw = 0, tf = 0;
 			foreach (KeyValuePair<Color, int> score in scores)
 			{
 				string colordesc = "error";
-				if (score.Key.Equals(Colors.Black)) colordesc = "Black";
-				if (score.Key.Equals(Colors.White)) colordesc = "White";
-				if (score.Key.Equals(GoBoardAux.thirdColor)) colordesc = "Player3";
-				output += colordesc + ": " + score.Value.ToString() + "\n";
+                if (score.Key.Equals(Colors.Black))
+                {
+                    colordesc = "Black";
+                    bw += score.Value;
+                }
+				if (score.Key.Equals(Colors.White))
+                {
+                    colordesc = "White";
+                    bw += score.Value;
+                }
+                if (score.Key.Equals(GoBoardAux.thirdColor))
+                {
+                    colordesc = "Orange";
+                    tf += score.Value;
+                }
+                if (score.Key.Equals(GoBoardAux.fourthColor))
+                {
+                    colordesc = "Green";
+                    tf += score.Value;
+                }
+                output += colordesc + ": " + score.Value.ToString() + "\n";
 			}
-			MessageBox.Show(output);
+            output += "Black + White: " + bw.ToString() + "\n";
+            output += "Orange + Green: " + tf.ToString() + "\n";
+            MessageBox.Show(output);
 		}
 
 		//// prevButton_left_down handles the rewind one move button.  Also,
@@ -440,14 +460,20 @@ F1 produces this help.
 		{
 			if (GoBoardAux.thirdColor == GoBoardAux.NoColor)
 			{
-				threeColorButton.Content = "3C+";
+				threeColorButton.Content = "3P";
 				GoBoardAux.thirdColor = Colors.Tomato;
 			}
-			else
+			else if (GoBoardAux.fourthColor == GoBoardAux.NoColor)
 			{
-				threeColorButton.Content = "3C-";
-				GoBoardAux.thirdColor = GoBoardAux.NoColor;
+				threeColorButton.Content = "4P";
+				GoBoardAux.fourthColor = Colors.MediumSeaGreen;
 			}
+            else
+            {
+                threeColorButton.Content = "2P";
+                GoBoardAux.thirdColor = GoBoardAux.NoColor;
+                GoBoardAux.fourthColor = GoBoardAux.NoColor;
+            }
 
 		}
 
